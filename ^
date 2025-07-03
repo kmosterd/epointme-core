@@ -1,0 +1,34 @@
+import { createClient } from '@supabase/supabase-js';
+
+const supa = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE!      // service-role key vereist voor meta-queries
+);
+
+async function main() {
+  // 1. Controle extensies
+  const { data: ext } = await supa.rpc('pg_catalog.pg_extension');   // meta-hack
+  const hasPgTrgm  = ext?.some((e: any) => e.extname === 'pg_trgm');
+  const hasVector  = ext?.some((e: any) => e.extname === 'vector');
+
+  // 2. Kolommen checken
+  async function column(table: string, col: string) {
+    const { data } = await supa.rpc('pg_catalog.pg_attribute', { table_name: table });
+    return data?.some((c: any) => c.attname === col);
+  }
+  const providerEmbedding = await column('provider', 'embedding');
+
+  // 3. Dummy-data check
+  const { count } = await supa.from('provider').select('*', { count: 'exact', head: true });
+
+  // 4. Functie check
+  const { error } = await supa.rpc('match_provider', { search_text: 'massage' });
+
+  // Summary
+  console.table({
+    pg_trgm: hasPgTrgm,
+    vector: hasVector,
+    provider_embedding_col: providerEmbedding,
+    provider_rows: count,
+    match_provider_fn: error ? false : true
+  })
