@@ -2,6 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { EPointMeSection } from './EPointMeSection';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -17,6 +18,12 @@ function App() {
         </a>
       </div>
       <h1>Vite + React</h1>
+      <EPointMeSection
+        title="Welkom bij ePointMe!"
+        description="Dit is een herbruikbare, volledig responsive sectie met ShadCN en Tailwind."
+      >
+        <p className="text-base md:text-lg">Hier kun je eigen content plaatsen.</p>
+      </EPointMeSection>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
