@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: epointme-cms
+    env: node
+    plan: free
+    buildCommand: pnpm install && pnpm build
+    startCommand: pnpm start
+    rootDir: cms
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: PAYLOAD_SECRET
+        sync: false
